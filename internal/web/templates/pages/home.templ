@@ -1,0 +1,22 @@
+package pages
+
+import "github.com/yashashkumar/ai-issue-agent/internal/web/templates/layouts"
+
+templ Home() {
+	@layouts.Base("Home") {
+		<div class="px-6 py-10 bg-gradient-to-br from-zinc-800 to-zinc-900 shadow-2xl rounded-2xl border border-zinc-700 select-none text-center">
+			<h1 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
+				Orchestrate Your <span class="text-indigo-400">AI Agents</span>
+			</h1>
+			<p class="mt-4 text-lg text-zinc-400 max-w-2xl mx-auto">
+				Gateway and process manager for Gemini powered agents.
+			</p>
+			<!-- Simple setup test, complete dashboard to be implemented fully post templ generation -->
+			<div class="mt-8">
+				<a href="/projects" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-primary/90 h-10 px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 shadow shadow-indigo-500/20">
+					View Projects
+				</a>
+			</div>
+		</div>
+	}
+}

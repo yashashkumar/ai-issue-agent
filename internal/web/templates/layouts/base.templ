@@ -1,0 +1,65 @@
+package layouts
+
+templ Base(title string) {
+	<!DOCTYPE html>
+	<html lang="en" class="dark">
+		<head>
+			<meta charset="UTF-8"/>
+			<title>AgentForge - { title }</title>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<!-- Use CDN tailwind if not built locally, but Makefile provides build -->
+			<!-- For fallback we use play CDN so it always looks nice during dev if not generated -->
+			<script src="https://cdn.tailwindcss.com"></script>
+			<script>
+				tailwind.config = {
+					darkMode: 'class',
+					theme: {
+						extend: {
+							colors: {
+								zinc: require('tailwindcss/colors').zinc,
+							}
+						}
+					}
+				}
+			</script>
+			<script src="https://unpkg.com/htmx.org@2.0.0" integrity="sha384-wS5/5aONRzE6Z934V7R/qfPE4gR/PXYEosI8F2o1sXn7XpXYF/aXY8ZcI1N32yY" crossorigin="anonymous"></script>
+			<script src="https://unpkg.com/htmx-ext-sse@2.2.2/sse.js"></script>
+			<style>
+				[x-cloak] { display: none !important; }
+				.htmx-indicator{ display: none; }
+				.htmx-request .htmx-indicator{ display: inline; }
+				.htmx-request.htmx-indicator{ display: inline; }
+			</style>
+		</head>
+		<body class="bg-zinc-950 text-zinc-300 min-h-screen flex flex-col font-sans">
+			<!-- Header / Nav -->
+			<header class="border-b border-zinc-800 bg-zinc-900 shadow-sm sticky top-0 z-50">
+				<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+					<div class="flex items-center gap-2">
+						<!-- Brand Icon -->
+						<div class="w-8 h-8 rounded bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl">
+							A
+						</div>
+						<a href="/" class="text-xl font-bold tracking-tight text-white hover:text-indigo-400 transition-colors">AgentForge</a>
+					</div>
+					<nav class="flex gap-6">
+						<a href="/" class="text-sm font-medium hover:text-white transition-colors">Dashboard</a>
+						<a href="/projects" class="text-sm font-medium hover:text-white transition-colors">Projects</a>
+						<a href="/agents" class="text-sm font-medium hover:text-white transition-colors">Agents</a>
+					</nav>
+				</div>
+			</header>
+
+			<!-- Main content -->
+			<main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+				<div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
+				{ children... }
+			</main>
+
+			<!-- Footer -->
+			<footer class="border-t border-zinc-800 py-6 text-center text-zinc-500 text-sm mt-auto">
+				<p>AgentForge © { "2026" }. Go + HTMX + Tailwind.</p>
+			</footer>
+		</body>
+	</html>
+}
