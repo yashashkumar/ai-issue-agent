@@ -10,7 +10,7 @@ type ErrorResponse struct {
 	RequestID string `json:"request_id,omitempty"`
 }
 
-func writeJSON(w http.ResponseWriter, status int, data interface{}) {
+func WriteJSON(w http.ResponseWriter, status int, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	if data != nil {
@@ -20,6 +20,6 @@ func writeJSON(w http.ResponseWriter, status int, data interface{}) {
 	}
 }
 
-func writeJSONError(w http.ResponseWriter, status int, message string, requestID string) {
-	writeJSON(w, status, ErrorResponse{Error: message, RequestID: requestID})
+func WriteJSONError(w http.ResponseWriter, status int, message string, requestID string) {
+	WriteJSON(w, status, ErrorResponse{Error: message, RequestID: requestID})
 }

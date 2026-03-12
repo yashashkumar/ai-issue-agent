@@ -33,33 +33,33 @@ func (h *WebhookHandler) HandleGitHubIssues(w http.ResponseWriter, r *http.Reque
 
 	p, err := h.projectRepo.GetByGitHubRepo(ctx, owner, repo)
 	if err != nil {
-		writeJSONError(w, http.StatusNotFound, "project not found", reqID)
+		WriteJSONError(w, http.StatusNotFound, "project not found", reqID)
 		return
 	}
 
 	bodyBytes, err := io.ReadAll(r.Body)
 	if err != nil {
-		writeJSONError(w, http.StatusBadRequest, "failed to read body", reqID)
+		WriteJSONError(w, http.StatusBadRequest, "failed to read body", reqID)
 		return
 	}
 
 	if p.GitHubWebhookSecret != nil && *p.GitHubWebhookSecret != "" {
 		sig := r.Header.Get("X-Hub-Signature-256")
 		if err := service.VerifySignature(*p.GitHubWebhookSecret, sig, bodyBytes); err != nil {
-			writeJSONError(w, http.StatusUnauthorized, "invalid signature", reqID)
+			WriteJSONError(w, http.StatusUnauthorized, "invalid signature", reqID)
 			return
 		}
 	}
 
 	eventType := r.Header.Get("X-GitHub-Event")
 	if eventType != "issues" {
-		writeJSON(w, http.StatusOK, map[string]bool{"ignored": true})
+		WriteJSON(w, http.StatusOK, map[string]bool{"ignored": true})
 		return
 	}
 
 	payload, err := service.ParseWebhookPayload(bodyBytes)
 	if err != nil {
-		writeJSONError(w, http.StatusBadRequest, "invalid json payload", reqID)
+		WriteJSONError(w, http.StatusBadRequest, "invalid json payload", reqID)
 		return
 	}
 
@@ -72,7 +72,7 @@ func (h *WebhookHandler) HandleGitHubIssues(w http.ResponseWriter, r *http.Reque
 	}
 
 	if !validAction {
-		writeJSON(w, http.StatusOK, map[string]bool{"ignored": true})
+		WriteJSON(w, http.StatusOK, map[string]bool{"ignored": true})
 		return
 	}
 
@@ -92,7 +92,7 @@ func (h *WebhookHandler) HandleGitHubIssues(w http.ResponseWriter, r *http.Reque
 
 	// Also allow if allowed_emails is empty (permissive configuration) or logic config
 	if len(p.AllowedEmails) > 0 && !emailAllowed {
-		writeJSONError(w, http.StatusForbidden, "sender not in allowed list", reqID)
+		WriteJSONError(w, http.StatusForbidden, "sender not in allowed list", reqID)
 		return // Forbidden
 	}
 
@@ -125,7 +125,7 @@ func (h *WebhookHandler) HandleGitHubIssues(w http.ResponseWriter, r *http.Reque
 
 	h.spawner.Spawn(req)
 
-	writeJSON(w, http.StatusAccepted, map[string]string{
+	WriteJSON(w, http.StatusAccepted, map[string]string{
 		"agent_id": agentID,
 		"status":   "pending",
 	})
@@ -142,38 +142,38 @@ func (h *WebhookHandler) HandleGitHubIssueComments(w http.ResponseWriter, r *htt
 
 	p, err := h.projectRepo.GetByGitHubRepo(ctx, owner, repo)
 	if err != nil {
-		writeJSONError(w, http.StatusNotFound, "project not found", reqID)
+		WriteJSONError(w, http.StatusNotFound, "project not found", reqID)
 		return
 	}
 
 	bodyBytes, err := io.ReadAll(r.Body)
 	if err != nil {
-		writeJSONError(w, http.StatusBadRequest, "failed to read body", reqID)
+		WriteJSONError(w, http.StatusBadRequest, "failed to read body", reqID)
 		return
 	}
 
 	if p.GitHubWebhookSecret != nil && *p.GitHubWebhookSecret != "" {
 		sig := r.Header.Get("X-Hub-Signature-256")
 		if err := service.VerifySignature(*p.GitHubWebhookSecret, sig, bodyBytes); err != nil {
-			writeJSONError(w, http.StatusUnauthorized, "invalid signature", reqID)
+			WriteJSONError(w, http.StatusUnauthorized, "invalid signature", reqID)
 			return
 		}
 	}
 
 	eventType := r.Header.Get("X-GitHub-Event")
 	if eventType != "issue_comment" {
-		writeJSON(w, http.StatusOK, map[string]bool{"ignored": true})
+		WriteJSON(w, http.StatusOK, map[string]bool{"ignored": true})
 		return
 	}
 
 	payload, err := service.ParseWebhookPayload(bodyBytes)
 	if err != nil {
-		writeJSONError(w, http.StatusBadRequest, "invalid json payload", reqID)
+		WriteJSONError(w, http.StatusBadRequest, "invalid json payload", reqID)
 		return
 	}
 
 	if payload.Action != "created" && payload.Action != "edited" {
-		writeJSON(w, http.StatusOK, map[string]bool{"ignored": true})
+		WriteJSON(w, http.StatusOK, map[string]bool{"ignored": true})
 		return
 	}
 
@@ -200,7 +200,7 @@ func (h *WebhookHandler) HandleGitHubIssueComments(w http.ResponseWriter, r *htt
 
 	h.spawner.Spawn(req)
 
-	writeJSON(w, http.StatusAccepted, map[string]string{
+	WriteJSON(w, http.StatusAccepted, map[string]string{
 		"agent_id": agentID,
 		"status":   "pending",
 	})

@@ -32,11 +32,11 @@ func (h *AgentHandler) ListProjectAgents(w http.ResponseWriter, r *http.Request)
 
 	agents, err := h.agentSvc.ListProjectAgents(ctx, projectID)
 	if err != nil {
-		writeJSONError(w, http.StatusInternalServerError, "failed to fetch project agents", reqID)
+		WriteJSONError(w, http.StatusInternalServerError, "failed to fetch project agents", reqID)
 		return
 	}
 
-	writeJSON(w, http.StatusOK, agents)
+	WriteJSON(w, http.StatusOK, agents)
 }
 
 func (h *AgentHandler) ListAllAgents(w http.ResponseWriter, r *http.Request) {
@@ -45,11 +45,11 @@ func (h *AgentHandler) ListAllAgents(w http.ResponseWriter, r *http.Request) {
 
 	agents, err := h.agentSvc.ListAllAgents(ctx)
 	if err != nil {
-		writeJSONError(w, http.StatusInternalServerError, "failed to fetch agents", reqID)
+		WriteJSONError(w, http.StatusInternalServerError, "failed to fetch agents", reqID)
 		return
 	}
 
-	writeJSON(w, http.StatusOK, agents)
+	WriteJSON(w, http.StatusOK, agents)
 }
 
 func (h *AgentHandler) GetAgent(w http.ResponseWriter, r *http.Request) {
@@ -59,11 +59,11 @@ func (h *AgentHandler) GetAgent(w http.ResponseWriter, r *http.Request) {
 
 	agent, err := h.agentSvc.GetAgent(ctx, agentID)
 	if err != nil {
-		writeJSONError(w, http.StatusNotFound, "agent not found", reqID)
+		WriteJSONError(w, http.StatusNotFound, "agent not found", reqID)
 		return
 	}
 
-	writeJSON(w, http.StatusOK, agent)
+	WriteJSON(w, http.StatusOK, agent)
 }
 
 func (h *AgentHandler) GetAgentLogs(w http.ResponseWriter, r *http.Request) {
@@ -74,11 +74,11 @@ func (h *AgentHandler) GetAgentLogs(w http.ResponseWriter, r *http.Request) {
 
 	logs, err := h.agentSvc.GetAgentLogs(ctx, agentID, stream)
 	if err != nil {
-		writeJSONError(w, http.StatusInternalServerError, "failed to fetch logs", reqID)
+		WriteJSONError(w, http.StatusInternalServerError, "failed to fetch logs", reqID)
 		return
 	}
 
-	writeJSON(w, http.StatusOK, logs)
+	WriteJSON(w, http.StatusOK, logs)
 }
 
 func (h *AgentHandler) CancelAgent(w http.ResponseWriter, r *http.Request) {
@@ -87,7 +87,7 @@ func (h *AgentHandler) CancelAgent(w http.ResponseWriter, r *http.Request) {
 	agentID := r.PathValue("id")
 
 	if err := h.spawner.CancelAgent(agentID); err != nil {
-		writeJSONError(w, http.StatusInternalServerError, "failed to cancel agent", reqID)
+		WriteJSONError(w, http.StatusInternalServerError, "failed to cancel agent", reqID)
 		return
 	}
 
@@ -128,7 +128,7 @@ func (h *AgentHandler) ListAgentFiles(w http.ResponseWriter, r *http.Request) {
 
 	agent, err := h.agentSvc.GetAgent(ctx, agentID)
 	if err != nil || agent == nil {
-		writeJSONError(w, http.StatusNotFound, "agent not found", reqID)
+		WriteJSONError(w, http.StatusNotFound, "agent not found", reqID)
 		return
 	}
 
@@ -154,5 +154,5 @@ func (h *AgentHandler) ListAgentFiles(w http.ResponseWriter, r *http.Request) {
 		return nil
 	})
 
-	writeJSON(w, http.StatusOK, files)
+	WriteJSON(w, http.StatusOK, files)
 }

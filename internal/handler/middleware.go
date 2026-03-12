@@ -75,7 +75,7 @@ func RecoveryMiddleware(logger *slog.Logger) func(http.Handler) http.Handler {
 						slog.String("panic", fmt.Sprintf("%v", rec)),
 						slog.String("stack", string(stack)),
 					)
-					writeJSONError(w, http.StatusInternalServerError, "Internal Server Error", reqID)
+					WriteJSONError(w, http.StatusInternalServerError, "Internal Server Error", reqID)
 				}
 			}()
 			next.ServeHTTP(w, r)

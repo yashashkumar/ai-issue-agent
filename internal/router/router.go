@@ -29,6 +29,11 @@ func NewRouter(deps RouterDependencies) *http.ServeMux {
 		return next
 	}
 
+	// Health Check
+	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
+		handler.WriteJSON(w, http.StatusOK, map[string]string{"status": "ok"})
+	})
+
 	// Gateway Webhook endpoints
 	mux.Handle("POST /gateway/hooks/spawn/gh/{owner}/{repo}/issues", chain(deps.WebhookHandler.HandleGitHubIssues))
 	mux.Handle("POST /gateway/hooks/spawn/gh/{owner}/{repo}/issue-comments", chain(deps.WebhookHandler.HandleGitHubIssueComments))

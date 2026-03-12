@@ -39,12 +39,12 @@ func (h *SpawnHandler) HandleSpawn(w http.ResponseWriter, r *http.Request) {
 
 	var payload SpawnRequestPayload
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
-		writeJSONError(w, http.StatusBadRequest, "invalid request body", reqID)
+		WriteJSONError(w, http.StatusBadRequest, "invalid request body", reqID)
 		return
 	}
 
 	if payload.SystemPrompt == "" || len(payload.SystemPrompt) < 10 {
-		writeJSONError(w, http.StatusBadRequest, "system_prompt is required and must be at least 10 chars", reqID)
+		WriteJSONError(w, http.StatusBadRequest, "system_prompt is required and must be at least 10 chars", reqID)
 		return
 	}
 
@@ -52,13 +52,13 @@ func (h *SpawnHandler) HandleSpawn(w http.ResponseWriter, r *http.Request) {
 	if payload.WorkDir != nil && *payload.WorkDir != "" {
 		resolvedWorkDir = *payload.WorkDir
 		if info, err := os.Stat(resolvedWorkDir); err != nil || !info.IsDir() {
-			writeJSONError(w, http.StatusBadRequest, "work_dir does not exist or is not a directory", reqID)
+			WriteJSONError(w, http.StatusBadRequest, "work_dir does not exist or is not a directory", reqID)
 			return
 		}
 	} else if payload.ProjectID != nil && *payload.ProjectID != "" {
 		proj, err := h.projectSvc.GetProject(ctx, *payload.ProjectID)
 		if err != nil {
-			writeJSONError(w, http.StatusBadRequest, "invalid project_id", reqID)
+			WriteJSONError(w, http.StatusBadRequest, "invalid project_id", reqID)
 			return
 		}
 		resolvedWorkDir = proj.RootFolder
@@ -95,5 +95,5 @@ func (h *SpawnHandler) HandleSpawn(w http.ResponseWriter, r *http.Request) {
 		"agent_id": agentID,
 		"status":   "pending",
 	}
-	writeJSON(w, http.StatusAccepted, response)
+	WriteJSON(w, http.StatusAccepted, response)
 }

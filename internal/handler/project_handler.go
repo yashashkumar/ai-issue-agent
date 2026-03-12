@@ -45,7 +45,7 @@ func (h *ProjectHandler) ListProjects(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err != nil {
-		writeJSONError(w, http.StatusInternalServerError, "failed to list projects", reqID)
+		WriteJSONError(w, http.StatusInternalServerError, "failed to list projects", reqID)
 		return
 	}
 
@@ -53,7 +53,7 @@ func (h *ProjectHandler) ListProjects(w http.ResponseWriter, r *http.Request) {
 		projects = []models.Project{}
 	}
 
-	writeJSON(w, http.StatusOK, projects)
+	WriteJSON(w, http.StatusOK, projects)
 }
 
 func (h *ProjectHandler) CreateProject(w http.ResponseWriter, r *http.Request) {
@@ -62,22 +62,22 @@ func (h *ProjectHandler) CreateProject(w http.ResponseWriter, r *http.Request) {
 
 	var p models.Project
 	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
-		writeJSONError(w, http.StatusBadRequest, "invalid request body", reqID)
+		WriteJSONError(w, http.StatusBadRequest, "invalid request body", reqID)
 		return
 	}
 
 	if p.Name == "" || p.RootFolder == "" {
-		writeJSONError(w, http.StatusBadRequest, "name and root_folder are required", reqID)
+		WriteJSONError(w, http.StatusBadRequest, "name and root_folder are required", reqID)
 		return
 	}
 
 	created, err := h.projectSvc.CreateProject(ctx, &p)
 	if err != nil {
-		writeJSONError(w, http.StatusInternalServerError, "failed to create project", reqID)
+		WriteJSONError(w, http.StatusInternalServerError, "failed to create project", reqID)
 		return
 	}
 
-	writeJSON(w, http.StatusCreated, created)
+	WriteJSON(w, http.StatusCreated, created)
 }
 
 func (h *ProjectHandler) GetProject(w http.ResponseWriter, r *http.Request) {
@@ -87,11 +87,11 @@ func (h *ProjectHandler) GetProject(w http.ResponseWriter, r *http.Request) {
 
 	p, err := h.projectSvc.GetProject(ctx, id)
 	if err != nil {
-		writeJSONError(w, http.StatusNotFound, "project not found", reqID)
+		WriteJSONError(w, http.StatusNotFound, "project not found", reqID)
 		return
 	}
 
-	writeJSON(w, http.StatusOK, p)
+	WriteJSON(w, http.StatusOK, p)
 }
 
 func (h *ProjectHandler) UpdateProject(w http.ResponseWriter, r *http.Request) {
@@ -101,18 +101,18 @@ func (h *ProjectHandler) UpdateProject(w http.ResponseWriter, r *http.Request) {
 
 	var p models.Project
 	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
-		writeJSONError(w, http.StatusBadRequest, "invalid request body", reqID)
+		WriteJSONError(w, http.StatusBadRequest, "invalid request body", reqID)
 		return
 	}
 	p.ID = id
 
 	if err := h.projectSvc.UpdateProject(ctx, &p); err != nil {
-		writeJSONError(w, http.StatusInternalServerError, "failed to update project", reqID)
+		WriteJSONError(w, http.StatusInternalServerError, "failed to update project", reqID)
 		return
 	}
 
 	updated, _ := h.projectSvc.GetProject(ctx, id)
-	writeJSON(w, http.StatusOK, updated)
+	WriteJSON(w, http.StatusOK, updated)
 }
 
 func (h *ProjectHandler) DeleteProject(w http.ResponseWriter, r *http.Request) {
@@ -121,7 +121,7 @@ func (h *ProjectHandler) DeleteProject(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 
 	if err := h.projectSvc.DeleteProject(ctx, id); err != nil {
-		writeJSONError(w, http.StatusInternalServerError, "failed to delete project", reqID)
+		WriteJSONError(w, http.StatusInternalServerError, "failed to delete project", reqID)
 		return
 	}
 
